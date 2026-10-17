@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../screens/welcome_screen.dart';
-import '../screens/quiz_screens.dart';
+import '../screens/quiz_screen.dart';
 import '../screens/result_screen.dart';
 
 final GoRouter appRouter = GoRouter(

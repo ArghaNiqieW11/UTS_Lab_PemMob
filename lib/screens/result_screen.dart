@@ -13,6 +13,7 @@ class ResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<QuizProvider>();
     final themeProvider = context.watch<ThemeProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
     
     final maxScore = QuizData.questions.length * 10;
@@ -21,20 +22,20 @@ class ResultScreen extends StatelessWidget {
     Color feedbackColor;
 
     if (provider.score == maxScore) {
-      feedbackMessage = "Sempurna! Kamu master Flutter!";
-      feedbackIcon = Icons.workspace_premium;
+      feedbackMessage = "Sempurna! Kamu pantas jadi Master Flutter.";
+      feedbackIcon = Icons.stars_rounded;
       feedbackColor = Colors.amber;
     } else if (provider.score >= maxScore * 0.7) {
-      feedbackMessage = "Luar biasa! Pemahamanmu sangat baik.";
-      feedbackIcon = Icons.thumb_up_alt;
-      feedbackColor = Colors.green;
+      feedbackMessage = "Luar biasa! Pemahamanmu sangat tajam.";
+      feedbackIcon = Icons.thumb_up_alt_rounded;
+      feedbackColor = Colors.greenAccent.shade400;
     } else if (provider.score >= maxScore * 0.4) {
-      feedbackMessage = "Lumayan! Ayo pelajari modulnya lagi.";
-      feedbackIcon = Icons.menu_book;
-      feedbackColor = Colors.orange;
+      feedbackMessage = "Lumayan! Ayo baca kembali modulnya.";
+      feedbackIcon = Icons.menu_book_rounded;
+      feedbackColor = Colors.orangeAccent;
     } else {
-      feedbackMessage = "Jangan menyerah! Coba lagi ya.";
-      feedbackIcon = Icons.sentiment_dissatisfied;
+      feedbackMessage = "Jangan menyerah! Semua butuh proses.";
+      feedbackIcon = Icons.sentiment_dissatisfied_rounded;
       feedbackColor = Colors.redAccent;
     }
 
@@ -42,15 +43,13 @@ class ResultScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // Tombol Tema di pojok kanan atas
             Align(
               alignment: Alignment.topRight,
               child: Padding(
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 child: IconButton(
-                  icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+                  icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode, color: isDark ? Colors.amber : Colors.deepPurple),
                   onPressed: () => themeProvider.toggleTheme(),
-                  tooltip: 'Ganti Tema',
                 ),
               ),
             ),
@@ -60,13 +59,17 @@ class ResultScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(feedbackIcon, size: screenWidth * 0.3, color: feedbackColor),
-                    SizedBox(height: screenWidth * 0.05),
-                    Text('Kuis Selesai!', style: TextStyle(fontSize: screenWidth * 0.08, fontWeight: FontWeight.w900)),
+                    Container(
+                      padding: EdgeInsets.all(screenWidth * 0.06),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: feedbackColor.withOpacity(0.1), boxShadow: [BoxShadow(color: feedbackColor.withOpacity(0.3), blurRadius: 30, spreadRadius: 5)]),
+                      child: Icon(feedbackIcon, size: screenWidth * 0.25, color: feedbackColor),
+                    ),
+                    SizedBox(height: screenWidth * 0.06),
+                    Text('Misi Selesai!', style: TextStyle(fontSize: screenWidth * 0.09, fontWeight: FontWeight.w900, letterSpacing: 1)),
                     SizedBox(height: screenWidth * 0.02),
                     Text(
-                      'Kerja bagus, ${provider.userName}!',
-                      style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold),
+                      'Hebat, ${provider.userName}!',
+                      style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: screenWidth * 0.02),
@@ -75,30 +78,33 @@ class ResultScreen extends StatelessWidget {
                       style: TextStyle(fontSize: screenWidth * 0.04, color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: screenWidth * 0.08),
-                    Container(
-                      padding: EdgeInsets.all(screenWidth * 0.1),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: feedbackColor.withOpacity(0.1),
-                        border: Border.all(color: feedbackColor, width: 4),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '${provider.score}',
-                            style: TextStyle(fontSize: screenWidth * 0.15, fontWeight: FontWeight.w900, color: feedbackColor, height: 1.0),
+                    SizedBox(height: screenWidth * 0.1),
+                    // Animasi Penghitung Skor Berjalan (Counter Animation)
+                    TweenAnimationBuilder<int>(
+                      tween: IntTween(begin: 0, end: provider.score),
+                      duration: const Duration(seconds: 2),
+                      curve: Curves.easeOutExpo,
+                      builder: (context, value, child) {
+                        return Container(
+                          padding: EdgeInsets.all(screenWidth * 0.1),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isDark ? const Color(0xFF1E1E2C) : Colors.white,
+                            border: Border.all(color: feedbackColor.withOpacity(0.5), width: 6),
+                            boxShadow: [BoxShadow(color: feedbackColor.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)],
                           ),
-                          Text(
-                            '/ $maxScore',
-                            style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: Colors.grey),
+                          child: Column(
+                            children: [
+                              Text('$value', style: TextStyle(fontSize: screenWidth * 0.16, fontWeight: FontWeight.w900, color: feedbackColor, height: 1.0)),
+                              Text('DARI $maxScore', style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 1.5)),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     SizedBox(height: screenWidth * 0.12),
                     PrimaryButton(
-                      text: 'Main Lagi',
+                      text: 'Ulangi Kuis',
                       onPressed: () {
                         provider.resetQuiz();
                         context.go('/');

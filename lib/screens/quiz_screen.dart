@@ -12,6 +12,7 @@ class QuizScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<QuizProvider>();
     final themeProvider = context.watch<ThemeProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final questions = QuizData.questions;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -23,7 +24,6 @@ class QuizScreen extends StatelessWidget {
     final currentQuestion = questions[provider.currentQuestionIndex];
     final progress = (provider.currentQuestionIndex + 1) / questions.length;
 
-    // PopScope mencegah pengguna tidak sengaja menekan tombol "Back" di HP
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -31,122 +31,115 @@ class QuizScreen extends StatelessWidget {
         final bool shouldPop = await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Keluar dari Kuis?'),
-            content: const Text('Progres kuis dan skormu saat ini akan hilang.'),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Text('Keluar dari Kuis?', style: TextStyle(fontWeight: FontWeight.bold)),
+            content: const Text('Skormu saat ini akan hangus dan tidak tersimpan.'),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             actions: [
-              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Batal')),
-              TextButton(
+              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Lanjut Main', style: TextStyle(color: Colors.grey))),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                 onPressed: () {
                   context.read<QuizProvider>().resetQuiz();
                   Navigator.of(context).pop(true);
                 },
-                child: const Text('Keluar', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                child: const Text('Keluar'),
               ),
             ],
           ),
         ) ?? false;
         
-        if (shouldPop && context.mounted) {
-          context.go('/');
-        }
+        if (shouldPop && context.mounted) context.go('/');
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('BrainBlitz', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text('Soal ${provider.currentQuestionIndex + 1}', style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
           centerTitle: true,
-          automaticallyImplyLeading: false, // Menghilangkan tombol back bawaan
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
           actions: [
-            IconButton(
-              icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-              onPressed: () => themeProvider.toggleTheme(),
-              tooltip: 'Ganti Tema',
-            ),
+            IconButton(icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode, color: isDark ? Colors.amber : Colors.deepPurple), onPressed: () => themeProvider.toggleTheme()),
             SizedBox(width: screenWidth * 0.02),
           ],
         ),
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(screenWidth * 0.05),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.grey.shade300,
-                  color: const Color(0xFF6C63FF),
-                  minHeight: 8,
+                SizedBox(height: screenWidth * 0.02),
+                ClipRRect(
                   borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+                    color: const Color(0xFF6C63FF),
+                    minHeight: 10,
+                  ),
                 ),
-                SizedBox(height: screenWidth * 0.04),
-                Text(
-                  'Pertanyaan ${provider.currentQuestionIndex + 1} dari ${questions.length}',
-                  style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: screenWidth * 0.05),
+                SizedBox(height: screenWidth * 0.08),
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    transitionBuilder: (Widget child, Animation<double> animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: Tween<Offset>(begin: const Offset(0.05, 0), end: Offset.zero).animate(animation),
-                          child: child,
-                        ),
-                      );
-                    },
+                    duration: const Duration(milliseconds: 500),
+                    switchInCurve: Curves.easeOutBack,
+                    switchOutCurve: Curves.easeIn,
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(position: Tween<Offset>(begin: const Offset(0.2, 0), end: Offset.zero).animate(animation), child: child),
+                    ),
                     child: SingleChildScrollView(
-                      key: ValueKey<int>(provider.currentQuestionIndex), // Kunci penting untuk animasi
+                      key: ValueKey<int>(provider.currentQuestionIndex),
                       child: Column(
                         children: [
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(screenWidth * 0.06),
+                            padding: EdgeInsets.all(screenWidth * 0.08),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.3), width: 2),
+                              color: isDark ? const Color(0xFF1E1E2C) : Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [BoxShadow(color: const Color(0xFF6C63FF).withOpacity(0.15), blurRadius: 20, spreadRadius: 2, offset: const Offset(0, 10))],
                             ),
                             child: Text(
                               currentQuestion.questionText,
-                              style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.w600, height: 1.4),
+                              style: TextStyle(fontSize: screenWidth * 0.048, fontWeight: FontWeight.bold, height: 1.5, color: isDark ? Colors.white : Colors.black87),
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          SizedBox(height: screenWidth * 0.08),
+                          SizedBox(height: screenWidth * 0.1),
                           ...List.generate(currentQuestion.options.length, (index) {
                             return Padding(
                               padding: EdgeInsets.only(bottom: screenWidth * 0.04),
-                              child: InkWell(
-                                onTap: () {
-                                  bool isCorrect = index == currentQuestion.correctOptionIndex;
-                                  provider.answerQuestion(isCorrect);
-                                },
-                                borderRadius: BorderRadius.circular(16),
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(screenWidth * 0.05),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: screenWidth * 0.035,
-                                        backgroundColor: const Color(0xFF6C63FF).withOpacity(0.1),
-                                        child: Text(['A', 'B', 'C', 'D'][index], style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF6C63FF))),
-                                      ),
-                                      SizedBox(width: screenWidth * 0.04),
-                                      Expanded(
-                                        child: Text(
-                                          currentQuestion.options[index],
-                                          style: TextStyle(fontSize: screenWidth * 0.04),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    bool isCorrect = index == currentQuestion.correctOptionIndex;
+                                    provider.answerQuestion(isCorrect);
+                                  },
+                                  borderRadius: BorderRadius.circular(20),
+                                  splashColor: const Color(0xFF6C63FF).withOpacity(0.2),
+                                  highlightColor: const Color(0xFF6C63FF).withOpacity(0.1),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: double.infinity,
+                                    padding: EdgeInsets.all(screenWidth * 0.05),
+                                    decoration: BoxDecoration(
+                                      color: isDark ? Colors.grey[900] : Colors.grey[50],
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[300]!, width: 2),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(screenWidth * 0.03),
+                                          decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6C63FF).withOpacity(0.1)),
+                                          child: Text(['A', 'B', 'C', 'D'][index], style: const TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF6C63FF))),
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(width: screenWidth * 0.04),
+                                        Expanded(child: Text(currentQuestion.options[index], style: TextStyle(fontSize: screenWidth * 0.042, fontWeight: FontWeight.w600))),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

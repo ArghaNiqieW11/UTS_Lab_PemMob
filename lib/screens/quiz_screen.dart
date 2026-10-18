@@ -24,6 +24,13 @@ class QuizScreen extends StatelessWidget {
     final currentQuestion = questions[provider.currentQuestionIndex];
     final progress = (provider.currentQuestionIndex + 1) / questions.length;
 
+    final List<Color> optionColors = [
+      const Color(0xFFFF4B4B), // Red
+      const Color(0xFFFFC800), // Yellow
+      const Color(0xFF1CB0F6), // Blue
+      const Color(0xFFCE82FF), // Purple
+    ];
+
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -31,123 +38,116 @@ class QuizScreen extends StatelessWidget {
         final bool shouldPop = await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Keluar dari Kuis?', style: TextStyle(fontWeight: FontWeight.bold)),
-            content: const Text('Skormu saat ini akan hangus dan tidak tersimpan.'),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: const Text('Menyerah?', style: TextStyle(fontWeight: FontWeight.w900)),
+            content: const Text('Skormu akan hilang dan kamu harus mengulang dari awal.'),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: isDark ? const Color(0xFF202F36) : Colors.white,
             actions: [
-              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Lanjut Main', style: TextStyle(color: Colors.grey))),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Batal', style: TextStyle(fontWeight: FontWeight.bold))),
+              TextButton(
                 onPressed: () {
                   context.read<QuizProvider>().resetQuiz();
                   Navigator.of(context).pop(true);
                 },
-                child: const Text('Keluar'),
+                child: const Text('Keluar', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
         ) ?? false;
-        
         if (shouldPop && context.mounted) context.go('/');
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Soal ${provider.currentQuestionIndex + 1}', style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          elevation: 0,
           backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5),
+              color: const Color(0xFF58CC02),
+              minHeight: 16,
+            ),
+          ),
           actions: [
-            IconButton(icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode, color: isDark ? Colors.amber : Colors.deepPurple), onPressed: () => themeProvider.toggleTheme()),
+            IconButton(
+              icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+              color: isDark ? Colors.amber : const Color(0xFF1CB0F6),
+              onPressed: () => themeProvider.toggleTheme(),
+            ),
             SizedBox(width: screenWidth * 0.02),
           ],
         ),
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenWidth * 0.02),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: screenWidth * 0.02),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
-                    color: const Color(0xFF6C63FF),
-                    minHeight: 10,
+                SizedBox(height: screenWidth * 0.04),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+                  child: Container(
+                    key: ValueKey<int>(provider.currentQuestionIndex),
+                    width: double.infinity,
+                    padding: EdgeInsets.all(screenWidth * 0.08),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF202F36) : Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 3),
+                    ),
+                    child: Text(
+                      currentQuestion.questionText,
+                      style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF4B4B4B)),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
                 SizedBox(height: screenWidth * 0.08),
                 Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    switchInCurve: Curves.easeOutBack,
-                    switchOutCurve: Curves.easeIn,
-                    transitionBuilder: (child, animation) => FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(position: Tween<Offset>(begin: const Offset(0.2, 0), end: Offset.zero).animate(animation), child: child),
-                    ),
-                    child: SingleChildScrollView(
-                      key: ValueKey<int>(provider.currentQuestionIndex),
-                      child: Column(
-                        children: [
-                          Container(
+                  child: ListView.builder(
+                    itemCount: currentQuestion.options.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: screenWidth * 0.04),
+                        child: InkWell(
+                          onTap: () {
+                            bool isCorrect = index == currentQuestion.correctOptionIndex;
+                            provider.answerQuestion(isCorrect);
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(screenWidth * 0.08),
+                            padding: EdgeInsets.all(screenWidth * 0.05),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1E1E2C) : Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              boxShadow: [BoxShadow(color: const Color(0xFF6C63FF).withOpacity(0.15), blurRadius: 20, spreadRadius: 2, offset: const Offset(0, 10))],
+                              color: isDark ? const Color(0xFF131F24) : Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: optionColors[index], width: 3),
                             ),
-                            child: Text(
-                              currentQuestion.questionText,
-                              style: TextStyle(fontSize: screenWidth * 0.048, fontWeight: FontWeight.bold, height: 1.5, color: isDark ? Colors.white : Colors.black87),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          SizedBox(height: screenWidth * 0.1),
-                          ...List.generate(currentQuestion.options.length, (index) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: screenWidth * 0.04),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    bool isCorrect = index == currentQuestion.correctOptionIndex;
-                                    provider.answerQuestion(isCorrect);
-                                  },
-                                  borderRadius: BorderRadius.circular(20),
-                                  splashColor: const Color(0xFF6C63FF).withOpacity(0.2),
-                                  highlightColor: const Color(0xFF6C63FF).withOpacity(0.1),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    width: double.infinity,
-                                    padding: EdgeInsets.all(screenWidth * 0.05),
-                                    decoration: BoxDecoration(
-                                      color: isDark ? Colors.grey[900] : Colors.grey[50],
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[300]!, width: 2),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(screenWidth * 0.03),
-                                          decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6C63FF).withOpacity(0.1)),
-                                          child: Text(['A', 'B', 'C', 'D'][index], style: const TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF6C63FF))),
-                                        ),
-                                        SizedBox(width: screenWidth * 0.04),
-                                        Expanded(child: Text(currentQuestion.options[index], style: TextStyle(fontSize: screenWidth * 0.042, fontWeight: FontWeight.w600))),
-                                      ],
-                                    ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: screenWidth * 0.1,
+                                  height: screenWidth * 0.1,
+                                  decoration: BoxDecoration(color: optionColors[index], borderRadius: BorderRadius.circular(12)),
+                                  child: Center(
+                                    child: Text(['A', 'B', 'C', 'D'][index], style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18)),
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
+                                SizedBox(width: screenWidth * 0.04),
+                                Expanded(
+                                  child: Text(
+                                    currentQuestion.options[index],
+                                    style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF4B4B4B)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

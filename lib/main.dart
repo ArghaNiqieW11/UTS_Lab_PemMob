@@ -28,13 +28,17 @@ class BrainBlitzApp extends StatelessWidget {
           title: 'BrainBlitz Quiz',
           themeMode: themeProvider.themeMode, 
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6C63FF), brightness: Brightness.light),
-            fontFamily: GoogleFonts.poppins().fontFamily,
+            scaffoldBackgroundColor: const Color(0xFFF7F9FC),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF58CC02), brightness: Brightness.light),
+            // Menggunakan font Fredoka yang sangat cocok untuk tema gamified
+            fontFamily: GoogleFonts.fredoka().fontFamily,
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6C63FF), brightness: Brightness.dark),
-            fontFamily: GoogleFonts.poppins().fontFamily,
+            scaffoldBackgroundColor: const Color(0xFF131F24),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF58CC02), brightness: Brightness.dark),
+            // Menggunakan font Fredoka
+            fontFamily: GoogleFonts.fredoka().fontFamily,
             useMaterial3: true,
           ),
           routerConfig: appRouter,

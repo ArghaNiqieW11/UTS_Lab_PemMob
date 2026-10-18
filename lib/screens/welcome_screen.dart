@@ -15,15 +15,14 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
   final TextEditingController _nameController = TextEditingController();
   late AnimationController _animController;
-  late Animation<Offset> _floatingAnimation;
+  late Animation<double> _bounceAnimation;
 
   @override
   void initState() {
     super.initState();
-    // Animasi melayang (floating)
-    _animController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
-    _floatingAnimation = Tween<Offset>(begin: Offset.zero, end: const Offset(0, -0.1)).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
+    _animController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
+    _bounceAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOutBack),
     );
   }
 
@@ -41,106 +40,106 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isDark 
-                ? [const Color(0xFF0F2027), const Color(0xFF203A43), const Color(0xFF2C5364)] // Deep modern dark
-                : [const Color(0xFFE2E2E2), const Color(0xFFC9D6FF)], // Soft premium light
-            begin: Alignment.topLeft, end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: EdgeInsets.all(screenWidth * 0.04),
-                  child: IconButton(
-                    icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode, color: isDark ? Colors.amber : Colors.deepPurple),
-                    onPressed: () => themeProvider.toggleTheme(),
-                    tooltip: 'Ganti Tema',
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: IconButton(
+                  icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                  color: isDark ? Colors.amber : const Color(0xFF1CB0F6),
+                  iconSize: screenWidth * 0.08,
+                  onPressed: () => themeProvider.toggleTheme(),
                 ),
               ),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(screenWidth * 0.08),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor.withOpacity(isDark ? 0.7 : 0.9),
-                        borderRadius: BorderRadius.circular(32),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 30, offset: const Offset(0, 15)),
-                          BoxShadow(color: const Color(0xFF6C63FF).withOpacity(0.2), blurRadius: 20, offset: const Offset(0, -5)),
-                        ],
-                        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            ),
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ScaleTransition(
+                        scale: _bounceAnimation,
+                        child: Container(
+                          padding: EdgeInsets.all(screenWidth * 0.06),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFC800), // Vibrant Yellow
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: const Color(0xFFE5B500), width: 4),
+                          ),
+                          child: Icon(Icons.rocket_launch_rounded, size: screenWidth * 0.25, color: Colors.white),
+                        ),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.all(screenWidth * 0.08),
+                      SizedBox(height: screenWidth * 0.08),
+                      Text(
+                        'BRAINBLITZ',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.1, 
+                          fontWeight: FontWeight.w900, 
+                          color: isDark ? Colors.white : const Color(0xFF4B4B4B),
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.02),
+                      Text(
+                        'Siap menguji ilmu Flutter-mu?',
+                        style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold, color: Colors.grey),
+                      ),
+                      SizedBox(height: screenWidth * 0.1),
+                      Container(
+                        padding: EdgeInsets.all(screenWidth * 0.06),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF202F36) : Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 3),
+                        ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SlideTransition(
-                              position: _floatingAnimation,
-                              child: Container(
-                                padding: EdgeInsets.all(screenWidth * 0.05),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFF6C63FF).withOpacity(0.1),
-                                  boxShadow: [BoxShadow(color: const Color(0xFF6C63FF).withOpacity(0.3), blurRadius: 20, spreadRadius: 5)],
+                            TextField(
+                              controller: _nameController,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.w800, fontSize: screenWidth * 0.05),
+                              decoration: InputDecoration(
+                                hintText: 'Masukkan Namamu',
+                                hintStyle: const TextStyle(color: Colors.grey),
+                                filled: true,
+                                fillColor: isDark ? const Color(0xFF131F24) : const Color(0xFFF7F9FC),
+                                contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.04),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 2),
                                 ),
-                                child: Icon(Icons.psychology_rounded, size: screenWidth * 0.25, color: const Color(0xFF6C63FF)),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 2),
+                                ),
                               ),
                             ),
                             SizedBox(height: screenWidth * 0.06),
-                            Text('BrainBlitz', style: TextStyle(fontSize: screenWidth * 0.09, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-                            SizedBox(height: screenWidth * 0.02),
-                            Text('Uji Pengetahuan Flutter-mu!', style: TextStyle(fontSize: screenWidth * 0.04, color: isDark ? Colors.grey[400] : Colors.grey[700])),
-                            SizedBox(height: screenWidth * 0.08),
-                            TextField(
-                              controller: _nameController,
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: screenWidth * 0.045),
-                              decoration: InputDecoration(
-                                labelText: 'Nama Panggilan',
-                                hintText: 'Ketik namamu di sini...',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
-                                filled: true,
-                                fillColor: isDark ? Colors.grey[900]?.withOpacity(0.5) : Colors.grey[200],
-                                prefixIcon: const Icon(Icons.person, color: Color(0xFF6C63FF)),
-                                contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.05),
-                              ),
-                            ),
-                            SizedBox(height: screenWidth * 0.08),
                             PrimaryButton(
-                              text: 'Mulai Tantangan',
+                              text: 'Mulai Main',
+                              color: const Color(0xFF1CB0F6), // Vibrant Blue
+                              shadowColor: const Color(0xFF1899D6),
                               onPressed: () {
                                 if (_nameController.text.trim().isNotEmpty) {
                                   context.read<QuizProvider>().setUserName(_nameController.text.trim());
                                   context.go('/quiz');
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: const Text('Ops! Nama tidak boleh kosong ya.', style: TextStyle(fontWeight: FontWeight.bold)),
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                    backgroundColor: Colors.redAccent,
-                                  ));
                                 }
                               },
                             ),
                           ],
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

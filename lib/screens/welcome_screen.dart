@@ -12,23 +12,11 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   final TextEditingController _nameController = TextEditingController();
-  late AnimationController _animController;
-  late Animation<double> _bounceAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
-    _bounceAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeInOutBack),
-    );
-  }
 
   @override
   void dispose() {
-    _animController.dispose();
     _nameController.dispose();
     super.dispose();
   }
@@ -43,6 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       body: SafeArea(
         child: Column(
           children: [
+            // Bagian Atas: Tombol Tema
             Align(
               alignment: Alignment.topRight,
               child: Padding(
@@ -55,88 +44,120 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                 ),
               ),
             ),
+            
+            // Bagian Tengah: Maskot dan Judul (Fleksibel mengisi ruang)
             Expanded(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ScaleTransition(
-                        scale: _bounceAnimation,
-                        child: Container(
-                          padding: EdgeInsets.all(screenWidth * 0.06),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFC800), // Vibrant Yellow
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: const Color(0xFFE5B500), width: 4),
-                          ),
-                          child: Icon(Icons.rocket_launch_rounded, size: screenWidth * 0.25, color: Colors.white),
-                        ),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: screenWidth * 0.05),
+                    Container(
+                      padding: EdgeInsets.all(screenWidth * 0.08),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1CB0F6).withOpacity(0.1),
+                        shape: BoxShape.circle,
                       ),
-                      SizedBox(height: screenWidth * 0.08),
-                      Text(
-                        'BRAINBLITZ',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.1, 
-                          fontWeight: FontWeight.w900, 
-                          color: isDark ? Colors.white : const Color(0xFF4B4B4B),
-                          letterSpacing: 2,
-                        ),
+                      child: Icon(
+                        Icons.smart_toy_rounded, 
+                        size: screenWidth * 0.35, 
+                        color: const Color(0xFF1CB0F6)
                       ),
-                      SizedBox(height: screenWidth * 0.02),
-                      Text(
-                        'Siap menguji ilmu Flutter-mu?',
-                        style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                    SizedBox(height: screenWidth * 0.08),
+                    Text(
+                      'BrainBlitz',
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.12, 
+                        fontWeight: FontWeight.w900, 
+                        color: isDark ? Colors.white : const Color(0xFF333333),
+                        letterSpacing: 1.5,
                       ),
-                      SizedBox(height: screenWidth * 0.1),
-                      Container(
-                        padding: EdgeInsets.all(screenWidth * 0.06),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF202F36) : Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 3),
-                        ),
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: _nameController,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.w800, fontSize: screenWidth * 0.05),
-                              decoration: InputDecoration(
-                                hintText: 'Masukkan Namamu',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                filled: true,
-                                fillColor: isDark ? const Color(0xFF131F24) : const Color(0xFFF7F9FC),
-                                contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.04),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 2),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 2),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: screenWidth * 0.06),
-                            PrimaryButton(
-                              text: 'Mulai Main',
-                              color: const Color(0xFF1CB0F6), // Vibrant Blue
-                              shadowColor: const Color(0xFF1899D6),
-                              onPressed: () {
-                                if (_nameController.text.trim().isNotEmpty) {
-                                  context.read<QuizProvider>().setUserName(_nameController.text.trim());
-                                  context.go('/quiz');
-                                }
-                              },
-                            ),
-                          ],
-                        ),
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    Text(
+                      'Tantangan Kuis Flutter',
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05, 
+                        fontWeight: FontWeight.w700, 
+                        color: Colors.grey,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
+            ),
+
+            // Bagian Bawah: Form Input & Tombol (Terkunci di bawah layar)
+            Container(
+              padding: EdgeInsets.all(screenWidth * 0.06),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF202F36) : Colors.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(32), 
+                  topRight: Radius.circular(32)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), 
+                    blurRadius: 20, 
+                    offset: const Offset(0, -5)
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _nameController,
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: screenWidth * 0.05),
+                    decoration: InputDecoration(
+                      hintText: 'Nama Pemain',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: isDark ? const Color(0xFF131F24) : const Color(0xFFF7F9FC),
+                      prefixIcon: const Icon(Icons.person_outline_rounded, color: Colors.grey),
+                      contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.05),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(color: Color(0xFF1CB0F6), width: 2),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: screenWidth * 0.06),
+                  PrimaryButton(
+                    text: 'MULAI KUIS',
+                    color: const Color(0xFF58CC02), 
+                    shadowColor: const Color(0xFF58A700),
+                    onPressed: () {
+                      if (_nameController.text.trim().isNotEmpty) {
+                        context.read<QuizProvider>().setUserName(_nameController.text.trim());
+                        context.go('/quiz');
+                      } else {
+                        // Tambahan feedback jika nama kosong
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Isi namamu dulu ya!', style: TextStyle(fontWeight: FontWeight.bold)),
+                            backgroundColor: const Color(0xFFFF4B4B),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          )
+                        );
+                      }
+                    },
+                  ),
+                  // Memberikan jarak ekstra di bagian paling bawah untuk amannya gestur layar
+                  SizedBox(height: screenWidth * 0.02),
+                ],
               ),
             ),
           ],

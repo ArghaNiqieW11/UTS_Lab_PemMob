@@ -6,8 +6,28 @@ import '../providers/theme_provider.dart';
 import '../widgets/primary_button.dart';
 import '../data/quiz_data.dart';
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
+
+  @override
+  State<ResultScreen> createState() => _ResultScreenState();
+}
+
+class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _spinController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Animasi putaran cahaya
+    _spinController = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
+  }
+
+  @override
+  void dispose() {
+    _spinController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +39,20 @@ class ResultScreen extends StatelessWidget {
     final maxScore = QuizData.questions.length * 10;
     String feedbackTitle;
     Color feedbackColor;
-    String assetIcon;
+    IconData assetIcon;
 
     if (provider.score == maxScore) {
       feedbackTitle = "SEMPURNA!";
       feedbackColor = const Color(0xFFFFC800);
-      assetIcon = '🏆';
+      assetIcon = Icons.workspace_premium_rounded;
     } else if (provider.score >= maxScore * 0.7) {
       feedbackTitle = "LUAR BIASA!";
       feedbackColor = const Color(0xFF58CC02);
-      assetIcon = '🔥';
+      assetIcon = Icons.local_fire_department_rounded;
     } else {
       feedbackTitle = "AYO COBA LAGI!";
       feedbackColor = const Color(0xFFFF4B4B);
-      assetIcon = '💪';
+      assetIcon = Icons.fitness_center_rounded;
     }
 
     return Scaffold(
@@ -57,8 +77,22 @@ class ResultScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(assetIcon, style: TextStyle(fontSize: screenWidth * 0.25)),
-                      SizedBox(height: screenWidth * 0.04),
+                      // Efek Sunburst / Cahaya berputar
+                      SizedBox(
+                        height: screenWidth * 0.4,
+                        width: screenWidth * 0.4,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            RotationTransition(
+                              turns: _spinController,
+                              child: Icon(Icons.sunny, size: screenWidth * 0.4, color: feedbackColor.withOpacity(0.2)),
+                            ),
+                            Icon(assetIcon, size: screenWidth * 0.25, color: feedbackColor),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.02),
                       Text(
                         feedbackTitle,
                         style: TextStyle(fontSize: screenWidth * 0.08, fontWeight: FontWeight.w900, color: feedbackColor, letterSpacing: 2),
@@ -75,8 +109,11 @@ class ResultScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(vertical: screenWidth * 0.1),
                         decoration: BoxDecoration(
                           color: isDark ? const Color(0xFF202F36) : Colors.white,
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(35),
                           border: Border.all(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 4),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 10))
+                          ]
                         ),
                         child: Column(
                           children: [

@@ -1,3 +1,4 @@
+import 'dart:math'; // Wajib ditambahkan untuk fungsi acak (Random)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -24,12 +25,18 @@ class QuizScreen extends StatelessWidget {
     final currentQuestion = questions[provider.currentQuestionIndex];
     final progress = (provider.currentQuestionIndex + 1) / questions.length;
 
-    final List<Color> optionColors = [
+    // Kumpulan warna dasar pilihan ganda
+    final List<Color> baseColors = [
       const Color(0xFFFF4B4B), // Red
       const Color(0xFFFFC800), // Yellow
       const Color(0xFF1CB0F6), // Blue
       const Color(0xFFCE82FF), // Purple
     ];
+
+    // LOGIKA ACAK MURNI TAPI AMAN DARI FLICKER
+    // Kita acak urutan warnanya menggunakan Random berdasarkan nomor soal saat ini
+    final random = Random(provider.currentQuestionIndex);
+    final List<Color> shuffledColors = List.from(baseColors)..shuffle(random);
 
     return PopScope(
       canPop: false,
@@ -85,6 +92,8 @@ class QuizScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: screenWidth * 0.04),
+                
+                // BAGIAN SOAL MURNI DARI KODEMU SEBELUMNYA (TIDAK DIUBAH SAMA SEKALI)
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
@@ -104,11 +113,16 @@ class QuizScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                
                 SizedBox(height: screenWidth * 0.08),
                 Expanded(
                   child: ListView.builder(
                     itemCount: currentQuestion.options.length,
                     itemBuilder: (context, index) {
+                      
+                      // AMBIL WARNA YANG SUDAH DIACAK MURNI
+                      final dynamicColor = shuffledColors[index % shuffledColors.length];
+
                       return Padding(
                         padding: EdgeInsets.only(bottom: screenWidth * 0.04),
                         child: InkWell(
@@ -123,14 +137,14 @@ class QuizScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: isDark ? const Color(0xFF131F24) : Colors.white,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: optionColors[index], width: 3),
+                              border: Border.all(color: dynamicColor, width: 3),
                             ),
                             child: Row(
                               children: [
                                 Container(
                                   width: screenWidth * 0.1,
                                   height: screenWidth * 0.1,
-                                  decoration: BoxDecoration(color: optionColors[index], borderRadius: BorderRadius.circular(12)),
+                                  decoration: BoxDecoration(color: dynamicColor, borderRadius: BorderRadius.circular(12)),
                                   child: Center(
                                     child: Text(['A', 'B', 'C', 'D'][index], style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18)),
                                   ),

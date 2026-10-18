@@ -31,7 +31,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Bagian Atas: Tombol Tema
             Align(
               alignment: Alignment.topRight,
               child: Padding(
@@ -44,8 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
-            
-            // Bagian Tengah: Maskot dan Judul (Fleksibel mengisi ruang)
+
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -53,18 +51,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: screenWidth * 0.05),
-                    Container(
-                      padding: EdgeInsets.all(screenWidth * 0.08),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1CB0F6).withOpacity(0.1),
-                        shape: BoxShape.circle,
+                      Container(
+                        padding: EdgeInsets.all(screenWidth * 0.04), 
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1CB0F6).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset(
+                          'assets/images/logo.png', 
+                          width: screenWidth * 0.45,  
+                          height: screenWidth * 0.45,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.smart_toy_rounded, 
-                        size: screenWidth * 0.35, 
-                        color: const Color(0xFF1CB0F6)
-                      ),
-                    ),
                     SizedBox(height: screenWidth * 0.08),
                     Text(
                       'BrainBlitz',
@@ -89,7 +88,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
 
-            // Bagian Bawah: Form Input & Tombol (Terkunci di bawah layar)
             Container(
               padding: EdgeInsets.all(screenWidth * 0.06),
               decoration: BoxDecoration(
@@ -143,7 +141,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         context.read<QuizProvider>().setUserName(_nameController.text.trim());
                         context.go('/quiz');
                       } else {
-                        // Tambahan feedback jika nama kosong
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: const Text('Isi namamu dulu ya!', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -155,7 +152,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       }
                     },
                   ),
-                  // Memberikan jarak ekstra di bagian paling bawah untuk amannya gestur layar
                   SizedBox(height: screenWidth * 0.02),
                 ],
               ),

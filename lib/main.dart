@@ -25,20 +25,20 @@ class BrainBlitzApp extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp.router(
-          title: 'BrainBlitz Quiz',
+          title: 'GGMU Quiz',
           themeMode: themeProvider.themeMode, 
           theme: ThemeData(
-            scaffoldBackgroundColor: const Color(0xFFF7F9FC),
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF58CC02), brightness: Brightness.light),
-            // Menggunakan font Fredoka yang sangat cocok untuk tema gamified
-            fontFamily: GoogleFonts.fredoka().fontFamily,
+            // Light Mode: Background Merah MU
+            scaffoldBackgroundColor: const Color(0xFFDA291C),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFDA291C), brightness: Brightness.light),
+            fontFamily: GoogleFonts.oswald().fontFamily,
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            scaffoldBackgroundColor: const Color(0xFF131F24),
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF58CC02), brightness: Brightness.dark),
-            // Menggunakan font Fredoka
-            fontFamily: GoogleFonts.fredoka().fontFamily,
+            // Dark Mode: Background Biru Away/Third Kit
+            scaffoldBackgroundColor: const Color(0xFF001489),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF001489), brightness: Brightness.dark),
+            fontFamily: GoogleFonts.oswald().fontFamily,
             useMaterial3: true,
           ),
           routerConfig: appRouter,

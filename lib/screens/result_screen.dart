@@ -19,7 +19,6 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    // Animasi putaran cahaya
     _spinController = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
   }
 
@@ -42,17 +41,17 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
     IconData assetIcon;
 
     if (provider.score == maxScore) {
-      feedbackTitle = "SEMPURNA!";
-      feedbackColor = const Color(0xFFFFC800);
-      assetIcon = Icons.workspace_premium_rounded;
+      feedbackTitle = "LEGEND STATUS!";
+      feedbackColor = const Color(0xFFFBE122); // Emas
+      assetIcon = Icons.emoji_events_rounded;
     } else if (provider.score >= maxScore * 0.7) {
-      feedbackTitle = "LUAR BIASA!";
-      feedbackColor = const Color(0xFF58CC02);
+      feedbackTitle = "PEMAIN INTI!";
+      feedbackColor = const Color(0xFFDA291C); // Merah MU
       assetIcon = Icons.local_fire_department_rounded;
     } else {
-      feedbackTitle = "AYO COBA LAGI!";
-      feedbackColor = const Color(0xFFFF4B4B);
-      assetIcon = Icons.fitness_center_rounded;
+      feedbackTitle = "BALIK KE AKADEMI!";
+      feedbackColor = Colors.grey;
+      assetIcon = Icons.sports_soccer_rounded;
     }
 
     return Scaffold(
@@ -65,7 +64,7 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 child: IconButton(
                   icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-                  color: isDark ? Colors.amber : const Color(0xFF1CB0F6),
+                  color: isDark ? const Color(0xFFFBE122) : const Color(0xFFDA291C),
                   onPressed: () => themeProvider.toggleTheme(),
                 ),
               ),
@@ -77,7 +76,6 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Efek Sunburst / Cahaya berputar
                       SizedBox(
                         height: screenWidth * 0.4,
                         width: screenWidth * 0.4,
@@ -101,19 +99,17 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                       SizedBox(height: screenWidth * 0.02),
                       Text(
                         'Kerja bagus, ${provider.userName}!',
-                        style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF4B4B4B)),
+                        style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF111111)),
                       ),
                       SizedBox(height: screenWidth * 0.08),
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: screenWidth * 0.1),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF202F36) : Colors.white,
+                          color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
                           borderRadius: BorderRadius.circular(35),
-                          border: Border.all(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 4),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 10))
-                          ]
+                          border: Border.all(color: isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5), width: 4),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 10))]
                         ),
                         child: Column(
                           children: [
@@ -139,8 +135,8 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                       SizedBox(height: screenWidth * 0.1),
                       PrimaryButton(
                         text: 'MAIN LAGI',
-                        color: const Color(0xFF58CC02),
-                        shadowColor: const Color(0xFF58A700),
+                        color: const Color(0xFF000000), // Hitam MU
+                        shadowColor: const Color(0xFFFFFFFF),
                         onPressed: () {
                           provider.resetQuiz();
                           context.go('/');

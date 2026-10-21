@@ -1,4 +1,4 @@
-import 'dart:math'; // Wajib ditambahkan untuk fungsi acak (Random)
+import 'dart:math'; 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -25,16 +25,14 @@ class QuizScreen extends StatelessWidget {
     final currentQuestion = questions[provider.currentQuestionIndex];
     final progress = (provider.currentQuestionIndex + 1) / questions.length;
 
-    // Kumpulan warna dasar pilihan ganda
+    // Palet warna khas Manchester United (Merah, Hitam, Emas, Biru Jersey Away)
     final List<Color> baseColors = [
-      const Color(0xFFFF4B4B), // Red
-      const Color(0xFFFFC800), // Yellow
-      const Color(0xFF1CB0F6), // Blue
-      const Color(0xFFCE82FF), // Purple
+      const Color(0xFFDA291C), // MU Red
+      const Color(0xFF000000), // Black
+      const Color(0xFFC7A000), // Dark Gold
+      const Color(0xFF001489), // Deep Blue (Away/Third Kit)
     ];
 
-    // LOGIKA ACAK MURNI TAPI AMAN DARI FLICKER
-    // Kita acak urutan warnanya menggunakan Random berdasarkan nomor soal saat ini
     final random = Random(provider.currentQuestionIndex);
     final List<Color> shuffledColors = List.from(baseColors)..shuffle(random);
 
@@ -45,10 +43,10 @@ class QuizScreen extends StatelessWidget {
         final bool shouldPop = await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Menyerah?', style: TextStyle(fontWeight: FontWeight.w900)),
-            content: const Text('Skormu akan hilang dan kamu harus mengulang dari awal.'),
+            title: const Text('Keluar Pertandingan?', style: TextStyle(fontWeight: FontWeight.w900)),
+            content: const Text('Skormu akan hangus jika meninggalkan lapangan sekarang.'),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            backgroundColor: isDark ? const Color(0xFF202F36) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
             actions: [
               TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Batal', style: TextStyle(fontWeight: FontWeight.bold))),
               TextButton(
@@ -56,7 +54,7 @@ class QuizScreen extends StatelessWidget {
                   context.read<QuizProvider>().resetQuiz();
                   Navigator.of(context).pop(true);
                 },
-                child: const Text('Keluar', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                child: const Text('Keluar', style: TextStyle(color: Color(0xFFDA291C), fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -72,15 +70,15 @@ class QuizScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5),
-              color: const Color(0xFF58CC02),
+              backgroundColor: isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5),
+              color: const Color(0xFFFBE122), // Progress bar warna Emas MU
               minHeight: 16,
             ),
           ),
           actions: [
             IconButton(
               icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-              color: isDark ? Colors.amber : const Color(0xFF1CB0F6),
+              color: isDark ? const Color(0xFFFBE122) : const Color(0xFFDA291C),
               onPressed: () => themeProvider.toggleTheme(),
             ),
             SizedBox(width: screenWidth * 0.02),
@@ -92,8 +90,6 @@ class QuizScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: screenWidth * 0.04),
-                
-                // BAGIAN SOAL MURNI DARI KODEMU SEBELUMNYA (TIDAK DIUBAH SAMA SEKALI)
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
@@ -102,25 +98,22 @@ class QuizScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.all(screenWidth * 0.08),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF202F36) : Colors.white,
+                      color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: isDark ? const Color(0xFF37464F) : const Color(0xFFE5E5E5), width: 3),
+                      border: Border.all(color: isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5), width: 3),
                     ),
                     child: Text(
                       currentQuestion.questionText,
-                      style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF4B4B4B)),
+                      style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF111111)),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-                
                 SizedBox(height: screenWidth * 0.08),
                 Expanded(
                   child: ListView.builder(
                     itemCount: currentQuestion.options.length,
                     itemBuilder: (context, index) {
-                      
-                      // AMBIL WARNA YANG SUDAH DIACAK MURNI
                       final dynamicColor = shuffledColors[index % shuffledColors.length];
 
                       return Padding(
@@ -135,7 +128,7 @@ class QuizScreen extends StatelessWidget {
                             width: double.infinity,
                             padding: EdgeInsets.all(screenWidth * 0.05),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF131F24) : Colors.white,
+                              color: isDark ? const Color(0xFF111111) : Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: dynamicColor, width: 3),
                             ),
@@ -153,7 +146,7 @@ class QuizScreen extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     currentQuestion.options[index],
-                                    style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF4B4B4B)),
+                                    style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF111111)),
                                   ),
                                 ),
                               ],

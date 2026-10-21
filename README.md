@@ -1,38 +1,44 @@
-# 🚀 BrainBlitz - Gamified Flutter Quiz App
+# 🔴 BrainBlitz - Manchester United Edition (GGMU Quiz)
 
-BrainBlitz adalah aplikasi kuis interaktif berbasis *mobile* dengan antarmuka bergaya *gamified* yang ceria dan modern. Aplikasi ini dirancang untuk menguji pengetahuan dasar tentang framework Flutter dengan pengalaman UI/UX yang dinamis.
+BrainBlitz MU Edition adalah aplikasi kuis interaktif berbasis *mobile* dengan tema khusus **Manchester United**. Aplikasi ini dirancang untuk menguji pengetahuan *Red Army* seputar sejarah, pemain legendaris, dan momen bersejarah di *The Theatre of Dreams* dengan antarmuka *gamified* yang modern.
 
 ## 👨‍💻 Identitas Mahasiswa
 - **Nama:** Argha Niqie Wijaksono
-- **NIM:** [241401096]
+- **NIM:** 241401096
 - **Mata Kuliah:** Praktikum Pemrograman Mobile
-- **Kelas/Lab:** [PM 6]
+- **Lab:** PM 6
 
 ---
 
 ## ✨ Fitur Utama
-1. **Gamified UI & Animations:** Menggunakan tata letak bergaya permainan kasual dengan elemen UI yang interaktif.
-2. **Global Dual-Theme:** Mendukung tema terang (*Light Mode*) dan gelap (*Dark Mode*) dengan palet warna khusus yang bisa diubah kapan saja.
-3. **Dynamic Randomized Colors:** Warna tombol pilihan ganda diacak secara murni (*shuffled*) di setiap pertanyaan agar tampilan tidak membosankan.
-4. **State Management (Provider):** Menyimpan identitas pemain, progres pertanyaan, dan skor secara persisten (aman saat layar dirotasi).
-5. **Navigasi Aman (GoRouter & PopScope):** Transisi antar layar berjalan mulus, dilengkapi dialog pencegahan (*alert*) jika pengguna menekan tombol *back* secara tidak sengaja di tengah kuis.
+1. **Full Manchester United Theme:** Menggunakan palet warna khas Merah MU & Biru *Away Kit*, tipografi Montserrat, logo kustom HD, serta *wallpaper* Old Trafford di seluruh layar.
+2. **Dynamic Shuffled Colors:** Warna tombol pilihan jawaban diacak secara murni tanpa duplikasi pada setiap pertanyaan.
+3. **Dynamic Result Feedback:** Pesan apresiasi, ikon animasi, dan skor akhir menyesuaikan tingkat pencapaian pemain (Legend Status, Pemain Inti, atau Balik ke Akademi).
+4. **State Management & Safe Navigation:** Ditenagai `Provider` untuk menjaga *state* skor serta `go_router` + `PopScope` untuk mencegah pemain keluar kuis secara tidak sengaja.
+5. **Global Dual-Theme:** Fitur *Light Mode* dan *Dark Mode* yang responsif dengan penyesuaian visibilitas ikon tinggi.
 
 ---
 
-## 🛠️ Teknologi & Aset yang Digunakan
+## 🛠️ Aset & Teknologi
 - **Framework:** Flutter & Dart
 - **State Management:** Provider
 - **Routing:** GoRouter
-- **Tipografi:** Google Fonts (Fredoka)
-- **Ikonografi:** Material Design Icons
+- **Tipografi:** Google Fonts (Montserrat)
+- **Aset Kustom:** Logo HD (`logo.png`) & Latar Old Trafford (`old_trafford.jpg`)
 
 ---
 
 ## 📸 Tangkapan Layar Aplikasi
 
+### 🔴 Light Mode (Merah Home Kit)
 | Welcome Screen | Quiz Screen | Result Screen |
 | :---: | :---: | :---: |
-| <img src="screenshots/welcome.png" width="250"> | <img src="screenshots/quiz.png" width="250"> | <img src="screenshots/result.png" width="250"> |
+| <img src="screenshots/welcome_light.png" width="220"> | <img src="screenshots/quiz_light.png" width="220"> | <img src="screenshots/result_light.png" width="220"> |
+
+### 🔵 Dark Mode (Biru Away Kit)
+| Welcome Screen | Quiz Screen | Result Screen |
+| :---: | :---: | :---: |
+| <img src="screenshots/welcome_dark.png" width="220"> | <img src="screenshots/quiz_dark.png" width="220"> | <img src="screenshots/result_dark.png" width="220"> |
 
 ---
-*Proyek ini dikembangkan sebagai pemenuhan tugas Ujian Tengah Semester (UTS).*
+*Proyek ini dikembangkan sebagai pemenuhan tugas Ujian Tengah Semester (UTS) Praktikum Pemrograman Mobile.*

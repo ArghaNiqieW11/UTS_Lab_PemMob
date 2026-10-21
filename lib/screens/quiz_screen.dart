@@ -25,12 +25,12 @@ class QuizScreen extends StatelessWidget {
     final currentQuestion = questions[provider.currentQuestionIndex];
     final progress = (provider.currentQuestionIndex + 1) / questions.length;
 
-    // Palet warna khas Manchester United (Merah, Hitam, Emas, Biru Jersey Away)
+    // FIX: Merah dibuat sedikit lebih gelap (Deep Red) agar kontrasnya lebih nyaman di Light Mode
     final List<Color> baseColors = [
-      const Color(0xFFDA291C), // MU Red
-      const Color(0xFF000000), // Black
+      const Color(0xFFB51914), // Darker MU Red
+      const Color(0xFF000000), // MU Black
       const Color(0xFFC7A000), // Dark Gold
-      const Color(0xFF001489), // Deep Blue (Away/Third Kit)
+      const Color(0xFF001489), // Deep Blue 
     ];
 
     final random = Random(provider.currentQuestionIndex);
@@ -54,7 +54,7 @@ class QuizScreen extends StatelessWidget {
                   context.read<QuizProvider>().resetQuiz();
                   Navigator.of(context).pop(true);
                 },
-                child: const Text('Keluar', style: TextStyle(color: Color(0xFFDA291C), fontWeight: FontWeight.bold)),
+                child: const Text('Keluar', style: TextStyle(color: Color(0xFFB51914), fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -62,6 +62,7 @@ class QuizScreen extends StatelessWidget {
         if (shouldPop && context.mounted) context.go('/');
       },
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -70,96 +71,113 @@ class QuizScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5),
-              color: const Color(0xFFFBE122), // Progress bar warna Emas MU
+              backgroundColor: Colors.white.withOpacity(0.3),
+              color: const Color(0xFFFBE122), 
               minHeight: 16,
             ),
           ),
           actions: [
-            IconButton(
-              icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-              color: isDark ? const Color(0xFFFBE122) : const Color(0xFFDA291C),
-              onPressed: () => themeProvider.toggleTheme(),
+            // FIX VISIBILITAS IKON: Diberi background bulat gelap
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: const BoxDecoration(color: Colors.black45, shape: BoxShape.circle),
+              child: IconButton(
+                icon: Icon(themeProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                color: Colors.white,
+                onPressed: () => themeProvider.toggleTheme(),
+              ),
             ),
-            SizedBox(width: screenWidth * 0.02),
           ],
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenWidth * 0.02),
-            child: Column(
-              children: [
-                SizedBox(height: screenWidth * 0.04),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
-                  child: Container(
-                    key: ValueKey<int>(provider.currentQuestionIndex),
-                    width: double.infinity,
-                    padding: EdgeInsets.all(screenWidth * 0.08),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5), width: 3),
-                    ),
-                    child: Text(
-                      currentQuestion.questionText,
-                      style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF111111)),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(height: screenWidth * 0.08),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: currentQuestion.options.length,
-                    itemBuilder: (context, index) {
-                      final dynamicColor = shuffledColors[index % shuffledColors.length];
-
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: screenWidth * 0.04),
-                        child: InkWell(
-                          onTap: () {
-                            bool isCorrect = index == currentQuestion.correctOptionIndex;
-                            provider.answerQuestion(isCorrect);
-                          },
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(screenWidth * 0.05),
-                            decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF111111) : Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: dynamicColor, width: 3),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: screenWidth * 0.1,
-                                  height: screenWidth * 0.1,
-                                  decoration: BoxDecoration(color: dynamicColor, borderRadius: BorderRadius.circular(12)),
-                                  child: Center(
-                                    child: Text(['A', 'B', 'C', 'D'][index], style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18)),
-                                  ),
-                                ),
-                                SizedBox(width: screenWidth * 0.04),
-                                Expanded(
-                                  child: Text(
-                                    currentQuestion.options[index],
-                                    style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF111111)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/old_trafford.jpg',
+                fit: BoxFit.cover,
+                color: Colors.black.withOpacity(isDark ? 0.8 : 0.5), 
+                colorBlendMode: BlendMode.darken,
+              ),
             ),
-          ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenWidth * 0.02),
+                child: Column(
+                  children: [
+                    SizedBox(height: screenWidth * 0.04),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+                      child: Container(
+                        key: ValueKey<int>(provider.currentQuestionIndex),
+                        width: double.infinity,
+                        padding: EdgeInsets.all(screenWidth * 0.08),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.black.withOpacity(0.7) : Colors.white.withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: isDark ? const Color(0xFF333333) : Colors.white, width: 2),
+                        ),
+                        child: Text(
+                          currentQuestion.questionText,
+                          style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF111111)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.08),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: currentQuestion.options.length,
+                        itemBuilder: (context, index) {
+                          final dynamicColor = shuffledColors[index];
+                          final letterColor = dynamicColor == const Color(0xFFC7A000) ? Colors.black : Colors.white;
+
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: screenWidth * 0.04),
+                            child: InkWell(
+                              onTap: () {
+                                bool isCorrect = index == currentQuestion.correctOptionIndex;
+                                provider.answerQuestion(isCorrect);
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(screenWidth * 0.05),
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: dynamicColor, width: 3),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: screenWidth * 0.12,
+                                      height: screenWidth * 0.12,
+                                      decoration: BoxDecoration(color: dynamicColor, borderRadius: BorderRadius.circular(12)),
+                                      child: Center(
+                                        child: Text(['A', 'B', 'C', 'D'][index], style: TextStyle(fontWeight: FontWeight.w900, color: letterColor, fontSize: 18)),
+                                      ),
+                                    ),
+                                    SizedBox(width: screenWidth * 0.04),
+                                    Expanded(
+                                      child: Text(
+                                        currentQuestion.options[index],
+                                        style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF111111)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

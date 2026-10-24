@@ -77,7 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                         SizedBox(height: screenWidth * 0.08),
                         Text(
-                          'GLORY GGMU',
+                          'QUIZ',
                           style: TextStyle(
                             fontSize: screenWidth * 0.15, 
                             fontWeight: FontWeight.w900, 

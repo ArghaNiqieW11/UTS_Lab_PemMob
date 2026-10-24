@@ -1,8 +1,8 @@
-# 🔴 BrainBlitz - Manchester United Edition (GGMU Quiz)
+# BrainBlitz - Manchester United Edition (GGMU Quiz)
 
 BrainBlitz MU Edition adalah aplikasi kuis interaktif berbasis *mobile* dengan tema khusus **Manchester United**. Aplikasi ini dirancang untuk menguji pengetahuan *Red Army* seputar sejarah, pemain legendaris, dan momen bersejarah di *The Theatre of Dreams* dengan antarmuka *gamified* yang modern.
 
-## 👨‍💻 Identitas Mahasiswa
+## Identitas Mahasiswa
 - **Nama:** Argha Niqie Wijaksono
 - **NIM:** 241401096
 - **Mata Kuliah:** Praktikum Pemrograman Mobile
@@ -10,7 +10,7 @@ BrainBlitz MU Edition adalah aplikasi kuis interaktif berbasis *mobile* dengan t
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 1. **Full Manchester United Theme:** Menggunakan palet warna khas Merah MU & Biru *Away Kit*, tipografi Montserrat, logo kustom HD, serta *wallpaper* Old Trafford di seluruh layar.
 2. **Dynamic Shuffled Colors:** Warna tombol pilihan jawaban diacak secara murni tanpa duplikasi pada setiap pertanyaan.
 3. **Dynamic Result Feedback:** Pesan apresiasi, ikon animasi, dan skor akhir menyesuaikan tingkat pencapaian pemain (Legend Status, Pemain Inti, atau Balik ke Akademi).
@@ -19,7 +19,7 @@ BrainBlitz MU Edition adalah aplikasi kuis interaktif berbasis *mobile* dengan t
 
 ---
 
-## 🛠️ Aset & Teknologi
+## Aset & Teknologi
 - **Framework:** Flutter & Dart
 - **State Management:** Provider
 - **Routing:** GoRouter
@@ -28,7 +28,7 @@ BrainBlitz MU Edition adalah aplikasi kuis interaktif berbasis *mobile* dengan t
 
 ---
 
-## 📸 Tangkapan Layar Aplikasi
+## Tangkapan Layar Aplikasi
 
 ### 🔴 Light Mode (Merah Home Kit)
 | Welcome Screen | Quiz Screen | Result Screen |
@@ -40,5 +40,8 @@ BrainBlitz MU Edition adalah aplikasi kuis interaktif berbasis *mobile* dengan t
 | :---: | :---: | :---: |
 | <img src="screenshots/welcome_dark.png" width="220"> | <img src="screenshots/quiz_dark.png" width="220"> | <img src="screenshots/result_dark.png" width="220"> |
 
+## Link Mockup
+
+https://www.figma.com/proto/3alTQbuu1WUZJ6wbFnGtt7/Untitled?node-id=0-1&t=ivreXYP5sVDi72mQ-1
 ---
 *Proyek ini dikembangkan sebagai pemenuhan tugas Ujian Tengah Semester (UTS) Praktikum Pemrograman Mobile.*
